@@ -65,7 +65,7 @@
                 console.log(id);
             }
 
-            function redirectToClass() {
+            function loadStudents() {
 
             }
 
@@ -81,11 +81,11 @@
                         if(data.err == null) {
                             let templateScript = $("#classTableTemplate").html();
                             let template = Handlebars.compile(templateScript);
-                            let compiledHtml = template({"data": data});
-                            $("#classList").html(compiledHtml);
+                            let compiledHtml = template(data);
+                            $("#classTable").html(compiledHtml);
                         }
                         else {
-                            $("#classList").html("<tr>" + data.err +"</td>");
+                            $("#classTable").html("<tr>" + data.err +"</td>");
                         }
                     }
                 });
@@ -94,18 +94,32 @@
 
             <!-- Scripts for handlebars below -->
         <script id="classTableTemplate" type="text/x-handlebars-template">
-            {{#each data}}
-                <tr id="id_{{ID}}" onclick="onSubmit('{{ID}}')"> <!-- add on click event to direct to a student list of each class -->
-                    <td>{{Name}}</td>
-                    <td>{{'Start Date'}}</td>
-                    <td>{{'End Date'}}</td>
-                    <td>{{Instructor}}</td>
-                </tr>
-            {{/each}}
+            <!-- Add headers to these scripts -->
+            <table id="classTable">
+                <thead>
+                    <tr>
+                        {{#each headers}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {{#each classes}}
+                        <tr id="id_{{ID}}" onclick="onSubmit('{{ID}}')"> <!-- add on click event to direct to a student list of each class -->
+                            <td>{{ID}}</td>
+                            <td>{{Name}}</td>
+                            <td>{{'Start Date'}}</td>
+                            <td>{{'End Date'}}</td>
+                            <td>{{Instructor}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
         </script>
+
+        <script id="studentTableTemplate" type="text/x-handlebars-template"></script>
         
-
-
     </head>
 
     <body>
@@ -114,22 +128,9 @@
 
         </section>
 
-        <section>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Class</td>
-                        <td>Start Date</td>
-                        <td>End Date</td>
-                        <td>Instructor</td>
-                    </tr>
-                </thead>
+        <div id="classTable">
 
-                <tbody id="classList">
-                    
-                </tbody>
-            </table>
-        </section>
+        </div>
 
     </body>
 </html>

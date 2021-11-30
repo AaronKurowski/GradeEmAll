@@ -13,9 +13,10 @@
 
         if($stmt->execute()) {
             while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $classList[] = $result;
+                $returnArray['classes'][] = $result;
+                $returnArray['headers'] = array_keys($result);
             }
-            return json_encode($classList);
+            return json_encode($returnArray);
         }
         else {
             return json_encode(array("err" => "Error connecting to database"));
