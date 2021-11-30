@@ -21,6 +21,11 @@
                 border-collapse: collapse;
             }
 
+            thead > tr {
+                background-color: #298d9e;
+                height: 30px;
+            }
+
             tbody > tr {
                 border: 2px solid bisque;
             }
@@ -28,6 +33,7 @@
             tbody > tr > td {
                 border: 1px solid bisque; 
                 cursor: pointer;
+                height: 40px;
             }
 
             tbody > tr:hover {
@@ -41,15 +47,65 @@
 
 
         <script type="text/javascript">
-            function onSubmit() {
-                console.log("Pressed");
+            Handlebars.registerHelper('each', function(context, options) {
+                var ret = "";
+
+                for(var i=0, j=context.length; i<j; i++) {
+                    ret = ret + options.fn(context[i]);
+                }
+
+                return ret;
+            });
+
+            $(function() {
+                loadClasses();
+            })
+
+            function onSubmit(id) {
+                console.log(id);
+            }
+
+            function redirectToClass() {
+
+            }
+
+            function loadClasses() {
+                $.ajax({
+                    url: 'processGrading.php',
+                    type: 'POST',
+                    async: true,
+                    success: function(response) {
+                        let data = JSON.parse(response);
+                        console.log(data);
+                        
+                        if(data.err == null) {
+                            let templateScript = $("#classTableTemplate").html();
+                            let template = Handlebars.compile(templateScript);
+                            let compiledHtml = template({"data": data});
+                            $("#classList").html(compiledHtml);
+                        }
+                        else {
+                            $("#classList").html("<tr>" + data.err +"</td>");
+                        }
+                    }
+                });
             }
         </script>
+
             <!-- Scripts for handlebars below -->
-
-        <script type="text/x-handlebars-template">
-
+        <script id="classTableTemplate" type="text/x-handlebars-template">
+            {{#each data}}
+                <tr id="id_{{ID}}" onclick="onSubmit('{{ID}}')"> <!-- add on click event to direct to a student list of each class -->
+                    <td>{{Name}}</td>
+                    <td>{{'Start Date'}}</td>
+                    <td>{{'End Date'}}</td>
+                    <td>{{Instructor}}</td>
+                </tr>
+            {{/each}}
         </script>
+        
+
+
     </head>
 
     <body>
@@ -69,27 +125,8 @@
                     </tr>
                 </thead>
 
-                <tbody>
-                    <tr onclick="onSubmit();">
-                        <td>Blue</td>
-                        <td>11/23/2021</td>
-                        <td>11/25/2021</td>
-                        <td>J. Smith</td>
-                    </tr>
-
-                    <tr onclick="onSubmit();">
-                        <td>Red</td>
-                        <td>11/23/2021</td>
-                        <td>11/25/2021</td>
-                        <td>J. Smith</td>
-                    </tr>
-
-                    <tr onclick="onSubmit();">
-                        <td>Green</td>
-                        <td>11/23/2021</td>
-                        <td>11/25/2021</td>
-                        <td>J. Smith</td>
-                    </tr>
+                <tbody id="classList">
+                    
                 </tbody>
             </table>
         </section>
