@@ -45,7 +45,6 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
-
         <script type="text/javascript">
             Handlebars.registerHelper('each', function(context, options) {
                 var ret = "";
@@ -61,12 +60,13 @@
                 loadClasses();
             })
 
-            function onSubmit(id) {
+            function onClick(id) {
                 console.log(id);
+                clearTable();
             }
 
-            function loadStudents() {
-
+            function clearTable() {
+                $("#classTable").empty();
             }
 
             function loadClasses() {
@@ -77,18 +77,45 @@
                     success: function(response) {
                         let data = JSON.parse(response);
                         console.log(data);
-                        
+
                         if(data.err == null) {
                             let templateScript = $("#classTableTemplate").html();
                             let template = Handlebars.compile(templateScript);
                             let compiledHtml = template(data);
-                            $("#classTable").html(compiledHtml);
+                            $("#table").html(compiledHtml);
                         }
                         else {
-                            $("#classTable").html("<tr>" + data.err +"</td>");
+                            $("#table").html("<tr>" + data.err +"</td>");
                         }
                     }
                 });
+            }
+
+            function loadStudents(id) {
+                clearTable();
+                console.log(id);
+
+                $.ajax({
+                    url: 'processGrading.php',
+                    type: 'POST',
+                    async: true,
+                    data: {action: "getStudents", classID: id},
+                    success: function(response) {
+                        let data = JSON.parse(response);
+                        console.log(data);
+
+                        if(data.err == null) {
+                            let templateScript = $("#studentTableTemplate").html();
+                            let template = Handlebars.compile(templateScript);
+                            let compiledHtml = template(data);
+
+                            $("#table").html(compiledHtml);
+                        }
+                        else {
+                            $("#table").html("<tr>" + data.err + "</tr>");
+                        }
+                    }
+                })
             }
         </script>
 
@@ -106,7 +133,7 @@
             
                 <tbody>
                     {{#each classes}}
-                        <tr id="id_{{ID}}" onclick="onSubmit('{{ID}}')"> <!-- add on click event to direct to a student list of each class -->
+                        <tr id="id_{{ID}}" onclick="loadStudents('{{ID}}')"> <!-- add on click event to direct to a student list of each class -->
                             <td>{{ID}}</td>
                             <td>{{Name}}</td>
                             <td>{{'Start Date'}}</td>
@@ -118,19 +145,41 @@
             </table>
         </script>
 
-        <script id="studentTableTemplate" type="text/x-handlebars-template"></script>
-        
+        <script id="studentTableTemplate" type="text/x-handlebars-template">
+            <table>
+                <thead>
+                    <tr>
+                        {{#each headers}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each students}}
+                        <tr id="id_{{ID}}">
+                            <td>{{ID}}</td>
+                            <td>{{Name}}</td>
+                            <!-- <td>{{Class}}</td> -->
+                            <td>{{Company}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+        </script>
     </head>
 
     <body>
         <section>
-            <h1>Grading Home</h1>
-
+            <h1>GradeEmAll</h1>
         </section>
 
-        <div id="classTable">
-
-        </div>
-
+        <section>
+            <div id="table">
+    
+            </div>
+        </section>
+        
     </body>
 </html>
