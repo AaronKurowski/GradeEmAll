@@ -1,5 +1,43 @@
+<?php 
+    
+    // take form data and post to the database
+    // show attendee with the associated class they picked in student list
+
+    if($_SERVER["REQUEST_METHOD"] == "POST") {
+        $link = mysqli_connect("localhost", "root", "root", "GradeEmAll");
+
+        if($link == false) {
+            die("ERROR: Could not connect. " . mysqli_connect_error());
+        }
+    
+        $attendeeName = mysqli_real_escape_string($link, $_REQUEST['attendeeName']);
+        $attendeeEmail = mysqli_real_escape_string($link, $_REQUEST['attendeeEmail']);
+        $attendeePhone = mysqli_real_escape_string($link, $_REQUEST['attendeePhone']);
+        $submitterName = mysqli_real_escape_string($link, $_REQUEST['submitterName']);
+        $submitterEmail = mysqli_real_escape_string($link, $_REQUEST['submitterEmail']);
+        $submitterPhone = mysqli_real_escape_string($link, $_REQUEST['submitterPhone']);
+        $academyDate = mysqli_real_escape_string($link, $_REQUEST['academyDate']);
+
+        // Need to look up company contact or add it
+        $sql = "INSERT INTO `Student` (`Contact No_`, `Class ID`, `Company No_`, `Name`, `Email`, `Submitted By`, `Final Grade`) 
+                VALUES ('1', '$academyDate', '1', '$attendeeName', '$attendeeEmail', '$submitterPhone', 'A');";
+    
+        // $sql2 = ""; below: && mysqli_query($link, $sql2)
+    
+        if(mysqli_query($link, $sql)) {
+            // alert("Records added successfully");
+            echo "Records added successfully!";
+        } else {
+            echo "ERROR: Could not execute $sql. " . mysqli_error($link);
+        }
+    
+        mysqli_close($link);
+    }
+?>
+
 <html>
     <head>
+        <meta charset="UTF-8">
         <title>WebForm</title>
     
         <style>
@@ -10,8 +48,8 @@
             }
 
             #main-wrapper {
-                display: block;
-                justify-content: center;
+                /* display: block; */
+                /* justify-content: center; */
             }
 
             h2 {
@@ -29,16 +67,26 @@
                 text-align: center;
             }
 
+            
             label {
                 display:inline-block;
                 width: 200px;
                 margin-right: 10px;
                 text-align: right;
             }
-
+            
             form > input {
                 padding: 3px;
                 margin-bottom: 10px;
+            }
+            
+            @media screen and (max-width: 671px) {                
+                label {
+                    width: 200px;
+                    display: inline-block;
+                    text-align: center;
+                    margin-right: 10px;
+                }
             }
 
             .btn {
@@ -93,30 +141,30 @@
         <div id="main-wrapper">
             <h2>Class Sign-Up</h2>
             <div id="form-content">
-                <form>
-                    <label>Attendee Name: </label>
-                    <input type="text"><br>
+                <form action="initialWebForm.php" method="POST">
+                    <label for="attendeeName" >Attendee Name: </label>
+                    <input type="text" name="attendeeName" id="attendeeName"><br>
 
-                    <label>Attendee Email: </label>
-                    <input type="email"><br>
+                    <label for="attendeeEmail">Attendee Email: </label>
+                    <input type="email" name="attendeeEmail"><br>
 
-                    <label>Attendee Phone: </label>
-                    <input type="tel"><br>
+                    <label for="attendeePhone">Attendee Phone: </label>
+                    <input type="tel" name="attendeePhone" id="attendeePhone"><br>
 
-                    <label>Submitter Name: </label>
-                    <input type="text"><br>
+                    <label for="submitterName">Submitter Name: </label>
+                    <input type="text" name="submitterName" id="submitterName"><br>
 
-                    <label>Submitter Email: </label>
-                    <input type="email"><br>
+                    <label for="submitterEmail">Submitter Email: </label>
+                    <input type="email" name="submitterEmail" id="submitterEmail"><br>
 
-                    <label>Submitter Phone: </label>
-                    <input type="tel"><br>
+                    <label for="submitterPhone">Submitter Phone: </label>
+                    <input type="tel" name="submitterPhone" id="submitterPhone"><br>
 
-                    <label>Academy Date: </label>
-                    <select id="date-dropdown">
+                    <label for="academyDate">Academy Date: </label>
+                    <select id="date-dropdown" name="academyDate">
                         <option value="">--Select a Date--</option>
-                        <option value="Date 1">Date 1</option>
-                        <option value="Date 2">Date 2</option>
+                        <option value="1">Date 1</option>
+                        <option value="2">Date 2</option>
                     </select>
 
                     <br><br>
