@@ -56,6 +56,7 @@
                 return ret;
             });
 
+            // On load
             $(function() {
                 loadClasses();
             })
@@ -74,6 +75,7 @@
                     url: 'processGrading.php',
                     type: 'POST',
                     async: true,
+                    data: {action: "getClasses"},
                     success: function(response) {
                         let data = JSON.parse(response);
                         console.log(data);
@@ -93,7 +95,7 @@
 
             function loadStudents(id) {
                 clearTable();
-                console.log(id);
+                console.log("Loading class id: " + id);
 
                 $.ajax({
                     url: 'processGrading.php',
@@ -117,11 +119,37 @@
                     }
                 })
             }
+
+            function loadAssignments(id) {
+                clearTable();
+                console.log("Loading student id " + id + " assignments");
+
+                $.ajax({
+                    url: 'processGrading.php',
+                    type: 'POST',
+                    async: true,
+                    data: {action: "getAssignments", studentID: id},
+                    success: function(response) {
+                        let data = JSON.parse(response);
+                        console.log(data);
+                    
+                        if(data.err == null) {
+                            let templateScript = $("#assignmentTableTemplate").html();
+                            let template = Handlebars.compile(templateScript);
+                            let compiledHtml = template(data);
+
+                            $("#table").html(compiledHtml);
+                        }
+                        else {
+                            $("#table").html("<tr>" + data.err + "</tr>");
+                        }
+                    }
+                })
+            }
         </script>
 
             <!-- Scripts for handlebars below -->
         <script id="classTableTemplate" type="text/x-handlebars-template">
-            <!-- Add headers to these scripts -->
             <table id="classTable">
                 <thead>
                     <tr>
@@ -157,16 +185,39 @@
 
                 <tbody>
                     {{#each students}}
-                        <tr id="id_{{ID}}">
-                            <td>{{ID}}</td>
-                            <td>{{Name}}</td>
-                            <!-- <td>{{Class}}</td> -->
-                            <td>{{Company}}</td>
+                        <tr id="id_{{id}}" onclick="loadAssignments('{{id}}')">
+                            <td>{{id}}</td>
+                            <td>{{name}}</td>
+                            <td>{{class}}</td>
+                            <td>{{company}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
+        </script>
 
+        <script id="assignmentTableTemplate" type="text/x-handlebars-template">
+            <table>
+                <thead>
+                    <tr>
+                        {{#each headers}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each assignments}}
+                        <tr>
+                            <td>{{id}}</td>
+                            <td>{{name}}</td>
+                            <td>{{class}}</td>
+                            <td>{{weight}}</td>
+                            <td>{{student}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
         </script>
     </head>
 
