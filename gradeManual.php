@@ -21,13 +21,20 @@
                 border-collapse: collapse;
             }
 
-            tbody > tr {
-                border: 2px solid bisque;
+            thead > tr > td {
+                font-size: larger;
+                font-weight: bold;
+                color: cadetblue;
             }
 
-            tbody > tr > td {
-                border: 1px solid bisque; 
+            tbody > tr {
+                border: 2px solid bisque;
                 cursor: pointer;
+                height: 33px;
+            }
+            
+            tbody > tr > td {
+                border: 1px solid bisque;
             }
 
             tbody > tr:hover {
