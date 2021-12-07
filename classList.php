@@ -12,6 +12,10 @@
                 text-align: center;
             }
 
+            h1 {
+                text-align: center;
+            }
+
             .navButtons {
                 text-align: center;
                 margin-bottom: 5px;
@@ -155,9 +159,42 @@
                     }
                 })
             }
+
+            function loadSections(id) {
+                clearTable();
+                console.log("Loading student id " + id + " sections");
+
+                $.ajax({
+                    url: 'processGrading.php',
+                    type: 'POST',
+                    async: true,
+                    data: {action: "getSections", studentID: id},
+                    success: function(response) {
+                        let data = JSON.parse(response);
+                        console.log(data);
+                    
+                        if(data.err == null) {
+                            let templateScript = $("#studentSectionTemplate").html();
+                            let template = Handlebars.compile(templateScript);
+                            let compiledHtml = template(data);
+
+                            $("#table").html(compiledHtml);
+                        }
+                        else {
+                            $("#table").html("<tr>" + data.err + "</tr>");
+                        }
+                    }
+                })
+            }
+
         </script>
 
+        <!-- Change of plans. Have clickable classes to navigate to the sections
+             and then to the subsections. After that there will be a dropdown in which
+             you can select a student and administer grading
+             Classes => sections => subsections => select students => grade -->
         <script id="classTableTemplate" type="text/x-handlebars-template">
+            <h1>Classes</h1>
             <table id="classTable">
                 <thead>
                     <tr>
@@ -166,7 +203,7 @@
                         {{/each}}
                     </tr>
                 </thead>
-            
+
                 <tbody>
                     {{#each classes}}
                         <tr id="id_{{ID}}" onclick="loadStudents({{'Class ID'}})"> <!-- add on click event to direct to a student list of each class -->
@@ -180,7 +217,37 @@
             </table>
         </script>
 
+        <script id="classSectionTemplate" type="text/x-handlebars-template">
+            <h1>Class Sections</h1>
+            <div class="navButtons">
+                <button class="btn" type="submit" onclick="" value="Classes">Classes</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        {{#each headers}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each section}}
+                        <tr id="id_'{{Section ID}}'">
+                            <td>{{classType}}</td>
+                            <td>{{sectionID}}</td>
+                            <td>{{title}}</td>
+                            <td>{{startTime}}</td>
+                            <td>{{endTime}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+
         <script id="studentTableTemplate" type="text/x-handlebars-template">
+            <h1>Students</h1>
             <div class="navButtons">
                 <button class="btn" type="submit" onclick="loadClasses();" value="Classes">Classes</button>
             </div>
@@ -196,7 +263,7 @@
 
                 <tbody>
                     {{#each students}}
-                        <tr id="id_{{id}}" onclick="loadAssignments('{{id}}')">
+                        <tr id="id_{{contactNo}}" onclick="loadSections('{{contactNo}}')">
                             <td>{{contactNo}}</td>
                             <td>{{companyNo}}</td>
                             <td>{{name}}</td>
@@ -208,21 +275,40 @@
             </table>
         </script>
 
-        <script id="studentAssignmentTemplate" type="text/x-handlebars-template">
-            
+        <script id="studentSectionTemplate" type="text/x-handlebars-template">
+            <div class="navButtons">
+                <button class="btn" type="submit" onclick="" value="Classes">Back</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        {{#each headers}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each section}}
+                        <tr id="id_'{{Section ID}}'">
+                            <td>{{classType}}</td>
+                            <td>{{sectionID}}</td>
+                            <td>{{title}}</td>
+                            <td>{{startTime}}</td>
+                            <td>{{endTime}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
         </script>
     </head>
 
     <body>
         <section>
-            <div id="header">
+            <!-- <div id="header">
                 <h1>Class List</h1>
-                <div class="navButtons">
-                    <!-- <input type="submit" style="display: none" value="Classes"> -->
-                    <!-- <input type="submit" value="Btn 2"> -->
-                    <!-- <input type="submit" value="Btn 3"> -->
-                </div>
-            </div>
+            </div> -->
         </section>
 
         <section>

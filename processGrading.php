@@ -8,8 +8,8 @@
             $_GET['classID'] = $_POST['classID'];
             echo getStudents($_POST['classID']);
             break;
-        case "getAssignments":
-            echo getAssignments($_POST['studentID']);
+        case "getSections":
+            echo getSections($_POST['studentID']);
             break;
         default:
             echo "Switch statement has defaulted";
@@ -49,8 +49,6 @@
 
         if($stmt->execute($argArray)) {
             while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                // $returnArray['ID'] = $result['ID'];
-                // $returnArray['Name'] = $result['Name'];
                 $returnArray['students'][] = array(
                     "contactNo" => $result['Contact No_'],
                     "companyNo" => $result['Company No_'],
@@ -70,11 +68,11 @@
         }
     }
 
-    function getAssignments($id) {
+    function getSections($id) {
         include("db.php");
 
         $query = "SELECT *
-                  FROM Assignments
+                  FROM `Class Section`
                   WHERE Class = :id";
         
         $argArray = array(":id" => $id);
@@ -83,12 +81,12 @@
 
         if($stmt->execute($argArray)) {
             while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $returnArray['assignments'][] = array(
-                    "id" => $result['ID'],
-                    "name" => $result['Name'],
-                    "class" => $result['Class'],
-                    "weight" => $result['Weight'],
-                    "student" => $result['Student']
+                $returnArray['section'][] = array(
+                    "classType" => $result['Class Type'],
+                    "sectionID" => $result['Section ID'],
+                    "title" => $result['Title'],
+                    "startTime" => $result['Start Time'],
+                    "endTime" => $result['End Time']
                 );
                 $returnArray['headers'] = array_keys($result);
             }
