@@ -19,9 +19,8 @@
     function getClasses() {
         include("db.php"); // As $db
 
-        $query = "SELECT * FROM Classes";
-
-        $argArrary; // null for now
+        // Class Types: service and sales
+        $query = "SELECT * FROM Class";
 
         $stmt = $db->prepare($query);
 
@@ -41,8 +40,8 @@
         include("db.php");
 
         $query = "SELECT *
-                  FROM Students
-                  WHERE Class = :id";
+                  FROM Student
+                  WHERE `Class ID` = :id";
 
         $argArray = array(":id" => $id);
 
@@ -53,12 +52,16 @@
                 // $returnArray['ID'] = $result['ID'];
                 // $returnArray['Name'] = $result['Name'];
                 $returnArray['students'][] = array(
-                    "id" => $result['ID'],
+                    "contactNo" => $result['Contact No_'],
+                    "companyNo" => $result['Company No_'],
                     "name" => $result["Name"],
-                    "class" => $result["Class"],
-                    "company" => $result["Company"]
+                    "phone" => $result['Phone'],
+                    "grade" => $result['Final Grade']
                 );
-                $returnArray['headers'] = array_keys($result);
+
+                $returnArray['headers'] = array(
+                    "Contact No_", "Company No_", "Name", "Phone", "Final Grade"
+                );
             }
             return json_encode($returnArray);
         }

@@ -1,7 +1,4 @@
 <?php 
-    
-    // take form data and post to the database
-    // show attendee with the associated class they picked in student list
 
     if($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = mysqli_connect("localhost", "root", "root", "GradeEmAll");
@@ -19,13 +16,12 @@
         $academyDate = mysqli_real_escape_string($link, $_REQUEST['academyDate']);
 
         // Need to look up company contact or add it
-        $sql = "INSERT INTO `Student` (`Contact No_`, `Class ID`, `Company No_`, `Name`, `Email`, `Submitted By`, `Final Grade`) 
-                VALUES ('1', '$academyDate', '1', '$attendeeName', '$attendeeEmail', '$submitterPhone', 'A');";
+        $sql = "INSERT INTO `Student` (`Contact No_`, `Class ID`, `Company No_`, `Name`, `Email`, `Phone`, `Submitted By Name`, `Submitted By Email`, `Submitted By Phone`, `Final Grade`) 
+                VALUES ('1', '$academyDate', '1', '$attendeeName', '$attendeeEmail', '$attendeePhone', '$submitterName', '$submitterEmail', '$submitterPhone', NULL);";
     
         // $sql2 = ""; below: && mysqli_query($link, $sql2)
     
         if(mysqli_query($link, $sql)) {
-            // alert("Records added successfully");
             echo "Records added successfully!";
         } else {
             echo "ERROR: Could not execute $sql. " . mysqli_error($link);
@@ -67,17 +63,20 @@
                 text-align: center;
             }
 
-            
             label {
                 display:inline-block;
                 width: 200px;
                 margin-right: 10px;
                 text-align: right;
+                font-size: 25px;
             }
             
-            form > input {
+            form > input, select {
                 padding: 3px;
-                margin-bottom: 10px;
+                margin-bottom: 25px;
+                height: 40px;
+                width: 260;
+                font-size: 1.5em;
             }
             
             @media screen and (max-width: 671px) {                
@@ -163,8 +162,8 @@
                     <label for="academyDate">Academy Date: </label>
                     <select id="date-dropdown" name="academyDate">
                         <option value="">--Select a Date--</option>
-                        <option value="1">Date 1</option>
-                        <option value="2">Date 2</option>
+                        <option value="1">12/7/2021</option>
+                        <option value="2">02/1/2022</option>
                     </select>
 
                     <br><br>
