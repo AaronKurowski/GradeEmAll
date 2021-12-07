@@ -21,19 +21,32 @@
                 border-collapse: collapse;
             }
 
+<<<<<<< HEAD
+            thead > tr > td {
+                font-size: larger;
+                font-weight: bold;
+                color: cadetblue;
+=======
             thead > tr {
                 background-color: #298d9e;
                 height: 30px;
+>>>>>>> 40adafc205ee8f4a22eb40f5c540f9dd99a7f106
             }
 
             tbody > tr {
                 border: 2px solid bisque;
+                cursor: pointer;
+                height: 33px;
             }
-
+            
             tbody > tr > td {
+<<<<<<< HEAD
+                border: 1px solid bisque;
+=======
                 border: 1px solid bisque; 
                 cursor: pointer;
                 height: 40px;
+>>>>>>> 40adafc205ee8f4a22eb40f5c540f9dd99a7f106
             }
 
             tbody > tr:hover {
